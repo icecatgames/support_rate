@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>아쿠아서바이벌 확률 정보</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c9a84c;
+  --gold-light: #f0d98a;
+  --gold-dark: #8a6820;
+  --navy: #0a1020;
+  --navy-mid: #14213a;
+  --navy-card: #1a2b48;
+  --blue-glow: #5b9df5;
+  --blue-accent: #3a6fd8;
+  --stone: #d8dde8;
+  --stone-dark: #8a90a8;
+  --text-body: #cdd3e0;
+  --text-strong: #eef0f5;
+  --text-muted: #8a90a8;
+  --sidebar-w: 220px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-body);
+  background-color: var(--navy);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--navy-mid);
+  border-right: 1px solid rgba(201,168,76,0.15);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 24px 16px 16px;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+
+.sidebar-header h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.sidebar-logo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+/* Language list */
+.lang-section {
+  flex: 1;
+  padding: 12px 0;
+}
+
+.lang-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 16px 4px;
+}
+
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-size: 13.5px;
+  color: var(--text-body);
+  border-left: 3px solid transparent;
+}
+
+.lang-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-strong);
+}
+
+.lang-item.active {
+  background: rgba(201,168,76,0.08);
+  color: var(--gold);
+  border-left-color: var(--gold);
+  font-weight: 600;
+}
+
+.lang-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── MAIN AREA ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top nav tabs */
+.topnav {
+  background: var(--navy-mid);
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-tab {
+  padding: 18px 24px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.nav-tab:hover {
+  color: var(--text-strong);
+}
+
+.nav-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+  font-weight: 600;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 48px 56px;
+  max-width: 860px;
+}
+
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+
+/* ── ODDS TABLE ── */
+.odds-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0 10px;
+  font-size: 13.5px;
+}
+.odds-table th {
+  background: rgba(201,168,76,0.12);
+  color: var(--gold-light);
+  font-weight: 600;
+  padding: 9px 14px;
+  text-align: center;
+  border-bottom: 1px solid rgba(201,168,76,0.25);
+}
+.odds-table td {
+  padding: 8px 14px;
+  color: var(--text-body);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+}
+.odds-table tr:last-child td { border-bottom: none; }
+.odds-table tr:hover td { background: rgba(255,255,255,0.03); }
+.odds-table-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  margin: 18px 0 4px;
+}
+.odds-note {
+  font-size: 12px !important;
+  color: var(--text-muted) !important;
+  margin-top: 8px !important;
+  font-style: italic;
+}
+
+.odds-table-footnote {
+  font-size: 12px;
+  color: var(--text-secondary, #9ea7c4);
+  margin: 4px 0 12px 0;
+  padding-left: 2px;
+}
+
+/* ── 레벨별 토글 그룹 (무역항 등) ── */
+.odds-group {
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 8px;
+  margin: 10px 0;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+}
+.odds-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--gold-light);
+  font-weight: 600;
+  font-size: 14px;
+  background: rgba(201,168,76,0.06);
+}
+.odds-group-header:hover { background: rgba(201,168,76,0.12); }
+.odds-group-arrow {
+  transition: transform 0.2s ease;
+  font-size: 12px;
+  opacity: 0.75;
+}
+.odds-group.open .odds-group-arrow { transform: rotate(180deg); }
+.odds-group-body {
+  display: none;
+  padding: 4px 14px 14px;
+}
+.odds-group.open .odds-group-body { display: block; }
+
+/* 열 정렬 규칙: 모든 th/td 가운데 정렬 */
+.odds-table td:last-child {
+  font-variant-numeric: tabular-nums;
+  min-width: 110px;
+}
+.odds-table th:not(:first-child),
+.odds-table td:not(:first-child) {
+  min-width: 90px;
+}
+
+/* ── NOTICE (확률 엔트리 카드에서 재사용) ── */
+.notice-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+
+.notice-item {
+  background: var(--navy-card);
+  border: 1px solid rgba(91,157,245,0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.notice-item:hover { border-color: rgba(201,168,76,0.35); }
+
+.notice-item.open { border-color: rgba(201,168,76,0.4); }
+
+.notice-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.notice-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.badge-update { background: rgba(58,111,216,0.25); color: #7eb5ff; border: 1px solid rgba(58,111,216,0.4); }
+.badge-event  { background: rgba(201,168,76,0.2);  color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4); }
+.badge-patch  { background: rgba(39,174,96,0.2);   color: #7ddfaa; border: 1px solid rgba(39,174,96,0.4); }
+.badge-notice { background: rgba(160,100,220,0.2); color: #c9a0f5; border: 1px solid rgba(160,100,220,0.4); }
+.badge-launch { background: rgba(255,140,0,0.2); color: #ffc86a; border: 1px solid rgba(255,140,0,0.5); }
+
+.notice-meta { flex: 1; }
+
+.notice-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-bottom: 2px;
+}
+
+.notice-arrow {
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.notice-item.open .notice-arrow { transform: rotate(180deg); }
+
+.notice-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.notice-item.open .notice-body { display: block; }
+
+.notice-body p {
+  font-size: 13.5px;
+  color: var(--text-body);
+  line-height: 1.85;
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--navy-card); border-radius: 3px; }
+
+/* ── TBD WARNING ── */
+.cell-tbd {
+  background: rgba(231, 76, 60, 0.12);
+  color: #ff9b8a;
+  border-left: 2px solid rgba(231, 76, 60, 0.6);
+}
+.tbd-badge {
+  display: inline-block;
+  margin-right: 4px;
+  font-size: 12px;
+}
+.tbd-summary-banner {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  color: #ff9b8a;
+  font-size: 13px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 64px; }
+
+  .lang-item span.lang-name { display: none; }
+  .sidebar-header h2, .sidebar-logo, .lang-section-title { display: none; }
+  .lang-item { padding: 10px; justify-content: center; }
+  .lang-flag { font-size: 22px; }
+
+  .content { padding: 24px 20px; }
+  .topnav { padding: 0 12px; }
+  .nav-tab { padding: 16px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>Language</h2>
+    <div class="sidebar-logo">🌊 아쿠아서바이벌</div>
+  </div>
+  <div class="lang-section">
+    <div class="lang-section-title">Select Language</div>
+
+    <div class="lang-item" onclick="setLang('ko')">
+      <span class="lang-flag">🇰🇷</span>
+      <span class="lang-name">한국어</span>
+    </div>
+    <div class="lang-item" onclick="setLang('en')">
+      <span class="lang-flag">🇺🇸</span>
+      <span class="lang-name">English</span>
+    </div>
+    <div class="lang-item active" onclick="setLang('ph')">
+      <span class="lang-flag">🇵🇭</span>
+      <span class="lang-name">Filipino</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+  <!-- Top Nav -->
+  <div class="topnav">
+    <div class="nav-tab active" onclick="switchPage('odds', this)" data-i18n="tab_odds"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- 확률공개 -->
+    <div class="page-section active" id="page-odds">
+      <div class="page-title" data-i18n="odds_title"></div>
+      <div class="page-subtitle" data-i18n="odds_subtitle"></div>
+      <div class="notice-list" id="odds-list">
+        <div style="text-align:center; padding:40px 20px; color:var(--text-muted);" id="odds-loading">Loading...</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+/* ─── i18n DATA ─── */
+const i18n = {
+  ko: {
+    tab_odds: '확률공개',
+    odds_title: '확률공개',
+    odds_subtitle: '게임 내 확률형 콘텐츠의 확률 정보를 공개합니다. 공개된 확률은 게임법 시행령에 따라 반올림한 값으로 합산 결과가 100%가 되지 않을 수 있습니다.',
+    odds_note: '※ 표시된 확률은 소수점 반올림 값으로, 합산 시 100%와 다를 수 있습니다.',
+  },
+
+  en: {
+    tab_odds: 'Probability',
+    odds_title: 'Probability Disclosure',
+    odds_subtitle: 'We disclose the probability of random content in the game. Displayed rates are rounded values and may not sum to exactly 100%.',
+    odds_note: '※ Rates are rounded values and may not sum to exactly 100%.',
+  },
+
+  ph: {
+    tab_odds: 'Probability',
+    odds_title: 'Probability Disclosure',
+    odds_subtitle: 'Inihahayag namin ang posibilidad ng random na nilalaman sa laro. Ang mga ipinapakitang rate ay rounded at maaaring hindi eksaktong magdagdag ng 100%.',
+    odds_note: '※ Ang mga rate ay rounded at maaaring hindi eksaktong magdagdag ng 100%.',
+  },
+};
+
+/* ─── STATE ─── */
+var currentLang = 'ph';
+
+/* ─── APPLY LANGUAGE ─── */
+function applyLang(lang) {
+  var data = i18n[lang] || i18n['en'];
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (data[key] !== undefined) el.textContent = data[key];
+  });
+}
+
+/* ─── SET LANG ─── */
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  document.querySelectorAll('.lang-item').forEach(function(el) {
+    if (el.getAttribute('onclick') === "setLang('" + lang + "')") {
+      el.classList.add('active');
+    }
+  });
+  applyLang(lang);
+  renderOdds(lang);
+}
+
+/* ─── SWITCH PAGE ─── */
+function switchPage(page, btn) {
+  document.querySelectorAll('.page-section').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(function(el) { el.classList.remove('active'); });
+  btn.classList.add('active');
+  history.replaceState(null, '', '#' + page);
+}
+
+/* ─── NOTICE TOGGLE ─── */
+function toggleNotice(item) {
+  item.classList.toggle('open');
+}
+
+/* ─── GROUP TOGGLE (레벨별 토글 등) ─── */
+function toggleGroup(el, event) {
+  if (event) event.stopPropagation();
+  el.classList.toggle('open');
+}
+
+/* ─── ODDS ─── */
+var oddsBadgeClass = { summon: 'badge-notice', growth: 'badge-update', titan: 'badge-patch', item: 'badge-notice', alliance: 'badge-launch', event: 'badge-event', trade: 'badge-update' };
+var oddsData = null;
+
+function renderOdds(lang) {
+  if (!oddsData) return;
+  var list = document.getElementById('odds-list');
+  var t = i18n[lang] || i18n['en'];
+  var noteText = t['odds_note'] || '';
+
+  list.innerHTML = oddsData.entries.map(function(entry) {
+    var badgeClass = oddsBadgeClass[entry.badge] || 'badge-notice';
+    var badgeLabel = entry.badge_label ? (entry.badge_label[lang] || entry.badge_label['en']) : entry.badge.toUpperCase();
+    var title = entry.title[lang] || entry.title['en'];
+    var desc  = entry.desc  ? (entry.desc[lang]  || entry.desc['en'])  : '';
+
+    // 테이블 렌더 헬퍼
+    function renderTable(tbl) {
+      var tblTitle = tbl.title ? '<div class="odds-table-title">' + (tbl.title[lang] || tbl.title['en'] || tbl.title['ko'] || '') + '</div>' : '';
+      var cols = tbl.columns[lang] || tbl.columns['en'];
+      var theadCells = cols.map(function(c) { return '<th>' + c + '</th>'; }).join('');
+      var tbodyRows = tbl.rows.map(function(row) {
+        var cells = row.cells.map(function(cell) {
+          var text = typeof cell === 'object' ? (cell[lang] || cell['en']) : cell;
+          if (typeof text === 'string' && text.indexOf('[TBD]') !== -1) {
+            return '<td class="cell-tbd"><span class="tbd-badge">⚠️</span>' + text + '</td>';
+          }
+          return '<td>' + text + '</td>';
+        }).join('');
+        return '<tr>' + cells + '</tr>';
+      }).join('');
+      var noteHtml = '';
+      if (tbl.note) {
+        var nt = tbl.note[lang] || tbl.note['en'] || tbl.note['ko'] || '';
+        if (nt) noteHtml = '<p class="odds-table-footnote">' + nt + '</p>';
+      }
+      return tblTitle +
+        '<table class="odds-table">' +
+        '<thead><tr>' + theadCells + '</tr></thead>' +
+        '<tbody>' + tbodyRows + '</tbody>' +
+        '</table>' +
+        noteHtml;
+    }
+
+    // groups (레벨별 토글) 우선, 없으면 tables, 없으면 단일 rows
+    var tablesHtml;
+    if (entry.groups && entry.groups.length) {
+      tablesHtml = entry.groups.map(function(group) {
+        var openClass = group.defaultOpen ? ' open' : '';
+        var groupTitle = group.title ? (group.title[lang] || group.title['en']) : '';
+        var inner = (group.tables || []).map(renderTable).join('');
+        return '<div class="odds-group' + openClass + '">' +
+               '  <div class="odds-group-header" onclick="toggleGroup(this.parentElement, event)">' +
+               '    <span>' + groupTitle + '</span>' +
+               '    <span class="odds-group-arrow">▼</span>' +
+               '  </div>' +
+               '  <div class="odds-group-body">' + inner + '</div>' +
+               '</div>';
+      }).join('');
+    } else {
+      var tables = entry.tables || [{ title: null, columns: entry.columns, rows: entry.rows }];
+      if (entry.rows && entry.note && tables.length === 1 && !tables[0].note) {
+        tables[0].note = entry.note;
+      }
+      tablesHtml = tables.map(renderTable).join('');
+    }
+
+    return [
+      '<div class="notice-item">',
+      '  <div class="notice-header" onclick="toggleNotice(this.parentElement)">',
+      '    <span class="notice-badge ' + badgeClass + '">' + badgeLabel + '</span>',
+      '    <div class="notice-meta">',
+      '      <div class="notice-title">' + title + '</div>',
+      '    </div>',
+      '    <span class="notice-arrow">▼</span>',
+      '  </div>',
+      '  <div class="notice-body">',
+      (desc ? '    <p>' + desc + '</p>' : ''),
+      tablesHtml,
+      '    <p class="odds-note">' + noteText + '</p>',
+      '  </div>',
+      '</div>'
+    ].join('\n');
+  }).join('\n');
+}
+
+function loadOdds() {
+  fetch('probability.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      oddsData = data;
+      renderOdds(currentLang);
+      // TBD 배너: 렌더링 후 cell-tbd 개수 카운트
+      var tbdCount = document.querySelectorAll('#odds-list .cell-tbd').length;
+      var list = document.getElementById('odds-list');
+      var existingBanner = document.getElementById('tbd-summary-banner');
+      if (existingBanner) { existingBanner.parentNode.removeChild(existingBanner); }
+      if (tbdCount > 0 && list) {
+        var banner = document.createElement('div');
+        banner.id = 'tbd-summary-banner';
+        banner.className = 'tbd-summary-banner';
+        banner.textContent = '⚠️ 이름 미해결 항목 ' + tbdCount + '건 존재 — QA 확인 필요';
+        list.parentNode.insertBefore(banner, list);
+      }
+    })
+    .catch(function() {
+      var el = document.getElementById('odds-loading');
+      if (el) el.textContent = 'Failed to load data.';
+    });
+}
+
+/* ─── INIT ─── */
+window.onload = function() {
+  applyLang('ph');
+  loadOdds();
+};
+
+window.addEventListener('hashchange', function() {
+  // 확률 단독 페이지 — hash 무시
+});
+</script>
+</body>
+</html>
