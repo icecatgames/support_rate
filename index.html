@@ -2,9 +2,11 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 고정 720px 레이아웃: 인게임 웹뷰에서 support 페이지(탭 오버플로우로 ~720px 축소 표시)와 배율을 맞춤.
+     width=device-width로 두면 반응형이라 가로 오버플로우가 없어 클라이언트 축소(FitToWidthJs)가 발동하지 않음 -->
+<meta name="viewport" content="width=720">
 <title>아쿠아서바이벌 확률 정보</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --gold: #c9a84c;
@@ -26,12 +28,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Noto Sans KR', 'Noto Sans', sans-serif;
+  font-family: 'Noto Sans KR', 'Noto Sans Thai', 'Noto Sans', sans-serif;
   font-size: 15px;
   line-height: 1.8;
   color: var(--text-body);
   background-color: var(--navy);
   min-height: 100vh;
+  min-width: 720px; /* viewport(width=720)를 무시하는 데스크톱 엔진에서도 720px 레이아웃을 강제해 축소(fit) 동작이 되게 함 */
   display: flex;
 }
 
@@ -407,6 +410,10 @@ body {
       <span class="lang-flag">🇵🇭</span>
       <span class="lang-name">Filipino</span>
     </div>
+    <div class="lang-item" onclick="setLang('th')">
+      <span class="lang-flag">🇹🇭</span>
+      <span class="lang-name">ไทย</span>
+    </div>
   </div>
 </div>
 
@@ -457,6 +464,14 @@ const i18n = {
     odds_title: 'Probability Disclosure',
     odds_subtitle: 'Inihahayag namin ang posibilidad ng random na nilalaman sa laro. Ang mga ipinapakitang rate ay rounded at maaaring hindi eksaktong magdagdag ng 100%.',
     odds_note: '※ Ang mga rate ay rounded at maaaring hindi eksaktong magdagdag ng 100%.',
+  },
+
+  th: {
+    brand: '🌊 AquaSurvival',
+    tab_odds: 'อัตราความน่าจะเป็น',
+    odds_title: 'การเปิดเผยอัตราความน่าจะเป็น',
+    odds_subtitle: 'เราเปิดเผยอัตราความน่าจะเป็นของเนื้อหาแบบสุ่มในเกม อัตราที่แสดงเป็นค่าที่ปัดเศษแล้ว จึงอาจรวมกันไม่เท่ากับ 100% พอดี',
+    odds_note: '※ อัตราที่แสดงเป็นค่าที่ปัดเศษ จึงอาจรวมกันไม่เท่ากับ 100% พอดี',
   },
 };
 
